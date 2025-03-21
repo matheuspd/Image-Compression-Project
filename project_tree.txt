@@ -1,0 +1,26 @@
+/jpeg_project
+  ├── compressor
+  │   ├── src
+  │   │   ├── main.c
+  │   │   ├── compressor.c
+  │   ├── include
+  │   │   ├── compressor.h
+  │   ├── Makefile
+  │
+  ├── decompressor
+  │   ├── src
+  │   │   ├── main.c
+  │   │   ├── decompressor.c
+  │   ├── include
+  │   │   ├── decompressor.h
+  │   ├── Makefile
+  │
+  ├── libjpeg
+  │   ├── src
+  │   │   ├── jpeg.c
+  │   │   ├── bmp.c
+  │   ├── include
+  │   │   ├── jpeg.h
+  │   │   ├── bmp.h
+  │   │   ├── types.h
+  │   ├── Makefile
