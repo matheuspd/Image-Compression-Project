@@ -1,4 +1,4 @@
-/jpeg_project
+/image-compression-project
   ├── compressor
   │   ├── src
   │   │   ├── main.c
@@ -17,10 +17,19 @@
   │
   ├── libjpeg
   │   ├── src
-  │   │   ├── jpeg.c
+  │   │   ├── bit_functions.c
   │   │   ├── bmp.c
+  │   │   ├── img_functions.c
+  │   │   ├── types.c
   │   ├── include
-  │   │   ├── jpeg.h
+  │   │   ├── bit_functions.h
   │   │   ├── bmp.h
+  │   │   ├── img_functions.h
   │   │   ├── types.h
   │   ├── Makefile
+  │
+  ├── examples (images)
+  │   ├── image.bmp
+  │
+  ├── compile.sh
+  ├── clean.sh

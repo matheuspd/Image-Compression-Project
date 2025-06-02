@@ -2,6 +2,10 @@
 
 This project aims to create an image compressor/decompressor in C based on the JPEG specification and following the lossy compression model for 24-bit BMP images.
 
+## Author
+
+#### Matheus Pereira Dias - NUSP: 11207752
+
 ## BMP Image Requirements
 
 * The image width and height must be multiples of 8.
