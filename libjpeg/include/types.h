@@ -55,20 +55,20 @@ typedef struct {
     uint8_t b;  /* Blue component */
     uint8_t g;  /* Green component */
     uint8_t r;  /* Red component */
-} RGBPixel;
+} RGB_Pixel;
 
 typedef struct {
     double Y;
     double Cb;
     double Cr;
-} YCbCrPixel;
+} YCbCr_Pixel;
 
 typedef struct {
     int **Y_blocks;
     int **Cb_blocks;
     int **Cr_blocks;
     int num_blocks;
-} BlocksZigZag;
+} Blocks_ZigZag;
 
 typedef struct {
     int skip;
@@ -90,37 +90,31 @@ typedef struct {
     const char *prefix;
     int total_length;
     int mantissa_bits;
-} DCHuffmanCode;
+} DC_Huffman_Code;
 
 typedef struct {
     int zeros;
     int category;
     const char *prefix;
     int total_length;
-} ACHuffmanCode;
+} AC_Huffman_Code;
 
 typedef struct {
     FILE *file;
     unsigned char buffer;
     int bit_count;
-} BitWriter;
-
-typedef struct {
-    FILE *file;
-    unsigned char buffer;
-    int bit_count;
-} BitReader;
+} Bit_Read_Write;
 
 extern const uint8_t lumin_matrix[BLOCK_SIZE][BLOCK_SIZE];
 
-extern const uint8_t crom_matrix[BLOCK_SIZE][BLOCK_SIZE];
+extern const uint8_t chrom_matrix[BLOCK_SIZE][BLOCK_SIZE];
 
 // Matriz C fornecida (pré-calculada para DCT 8x8)
 extern const double C[BLOCK_SIZE][BLOCK_SIZE];
 
-extern const DCHuffmanCode dc_table[11];
+extern const DC_Huffman_Code dc_table[11];
 
-extern const ACHuffmanCode ac_table[162];
+extern const AC_Huffman_Code ac_table[162];
 
 
 #endif /* TYPES_H */

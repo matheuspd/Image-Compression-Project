@@ -16,10 +16,12 @@
 int readHeader(FILE *F, BMPFILEHEADER *H);
 
 /**
- * @brief Reads the BMP file information header from the given file.
+ * @brief Reads the BMP file information header.
  *
- * This function reads the BMP info header and validates key properties such as image dimensions,
- * ensuring they are multiples of 8 and within the allowed range, and confirms that the pixel format is 24-bit uncompressed.
+ * This function reads the BMP info header from the file and performs validations:
+ * - Checks that the width and height are multiples of 8.
+ * - Ensures the dimensions are within the allowed range (8x8 to 1280x800).
+ * - Confirms that the image has 24 bits per pixel and uses no compression.
  *
  * @param F Pointer to the BMP file opened in binary mode.
  * @param H Pointer to a BMPINFOHEADER structure where the header info will be stored.
@@ -28,25 +30,25 @@ int readHeader(FILE *F, BMPFILEHEADER *H);
 int readInfoHeader(FILE *F, BMPINFOHEADER *H);
 
 /**
- * @brief Reads pixel data from the BMP file.
+ * @brief Reads pixel data from a BMP file.
  *
- * This function calculates the necessary padding per row (since BMP rows are padded to a multiple of 4 bytes)
- * and reads the pixel data from the file in bottom-to-top order.
+ * This function calculates the row padding (each row must have a size that is a multiple of 4 bytes)
+ * and reads the pixel data from the BMP file in bottom-to-top order, which is how BMP stores its data.
  *
  * @param file Pointer to the BMP file opened in binary mode.
- * @param H Pointer to the BMP file header (used for offset information).
+ * @param H Pointer to the BMP file header containing the offset to the pixel data.
  * @param width Image width.
  * @param height Image height.
- * @return Pointer to an array of RGBPixel structures containing the image pixels, or NULL on failure.
+ * @return Pointer to an array of RGB_Pixel structures containing the pixel data, or NULL on failure.
  */
-RGBPixel *read_pixels(FILE *file, BMPFILEHEADER *H, int width, int height);
+RGB_Pixel *read_pixels(FILE *file, BMPFILEHEADER *H, int width, int height);
 
 /**
  * @brief Frees memory allocated for pixel data.
  *
  * @param pixels Pointer to the pixel array to be freed.
  */
-void free_pixels(RGBPixel *pixels);
+void free_pixels(RGB_Pixel *pixels);
 
 /**
  * @brief Writes a BMP file based on the provided headers and pixel array.
@@ -57,9 +59,9 @@ void free_pixels(RGBPixel *pixels);
  * @param dst Pointer to the destination file already opened in "wb" mode.
  * @param fileHeader Pointer to the BMP file header.
  * @param infoHeader Pointer to the BMP information header.
- * @param pixels Pixel array (RGBPixel) previously loaded.
+ * @param pixels Pixel array (RGB_Pixel) previously loaded.
  * @return SUCCESS if the operation is successful, otherwise FAILURE.
  */
-int write_bmp(FILE *dst, BMPFILEHEADER *fileHeader, BMPINFOHEADER *infoHeader, RGBPixel *pixels);
+int write_bmp(FILE *dst, BMPFILEHEADER *fileHeader, BMPINFOHEADER *infoHeader, RGB_Pixel *pixels);
 
 #endif /* BMP_H */

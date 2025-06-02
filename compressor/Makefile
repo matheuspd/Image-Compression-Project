@@ -22,11 +22,15 @@ CFLAGS = -I$(INCDIR) -I$(LIBJPEG_INCDIR) -std=c99 -Wall -Wextra -pedantic -O2
 # -ljpeg: Link with the libjpeg library.
 LDFLAGS = -L$(LIBJPEG_LIBDIR) -ljpeg -lm
 
-# Source files for the compressor project.
-SRC = src/main.c src/compressor.c
+# Source and object directories
+SRC_DIR = src
+OBJ_DIR = obj
 
-# Generate object file names from source files.
-OBJ = $(SRC:.c=.o)
+# Find all .c files in src/
+SRC = $(wildcard $(SRC_DIR)/*.c)
+
+# Generate corresponding .o files in obj/
+OBJ = $(patsubst $(SRC_DIR)/%.c, $(OBJ_DIR)/%.o, $(SRC))
 
 # Final target executable.
 TARGET = compressor
@@ -38,10 +42,11 @@ all: $(TARGET)
 
 # Link object files and the precompiled libjpeg library to create the final executable.
 $(TARGET): $(OBJ) $(LIBJPEG_LIBDIR)/libjpeg.a
-	$(CC) $(CFLAGS) -o $(TARGET) $(OBJ) $(LDFLAGS)
+	$(CC) $(CFLAGS) -o $@ $^ $(LDFLAGS)
 
-# Compile each .c file to a .o file.
-%.o: %.c
+# Compile each .c to .o inside obj/
+$(OBJ_DIR)/%.o: $(SRC_DIR)/%.c
+	@mkdir -p $(OBJ_DIR)
 	$(CC) $(CFLAGS) -c $< -o $@
 
 # Clean target: remove all object files and the executable.

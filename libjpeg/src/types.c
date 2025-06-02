@@ -1,5 +1,6 @@
 #include "types.h"
 
+// Provided Luminance Matrix for 8x8 DCT
 const uint8_t lumin_matrix[BLOCK_SIZE][BLOCK_SIZE] = {
     {16, 11, 10, 16, 24, 40, 51, 61},
     {12, 12, 14, 19, 26, 58, 60, 55},
@@ -11,7 +12,8 @@ const uint8_t lumin_matrix[BLOCK_SIZE][BLOCK_SIZE] = {
     {72, 92, 95, 98, 112, 100, 103, 99}
 };
 
-const uint8_t crom_matrix[BLOCK_SIZE][BLOCK_SIZE] = {
+// Provided Chrominance Matrix for 8x8 DCT
+const uint8_t chrom_matrix[BLOCK_SIZE][BLOCK_SIZE] = {
     {17, 18, 24, 47, 99, 99, 99, 99},
     {18, 21, 26, 66, 99, 99, 99, 99},
     {24, 26, 56, 99, 99, 99, 99, 99},
@@ -22,7 +24,7 @@ const uint8_t crom_matrix[BLOCK_SIZE][BLOCK_SIZE] = {
     {99, 99, 99, 99, 99, 99, 99, 99}
 };
 
-// Matriz C fornecida (pré-calculada para DCT 8x8)
+// Provided Matrix C (pre-calculated for 8x8 DCT)
 const double C[BLOCK_SIZE][BLOCK_SIZE] = {
     {0.354,  0.354,  0.354,  0.354,  0.354,  0.354,  0.354,  0.354},
     {0.490,  0.416,  0.278,  0.098, -0.098, -0.278, -0.416, -0.490},
@@ -34,7 +36,8 @@ const double C[BLOCK_SIZE][BLOCK_SIZE] = {
     {0.098, -0.278,  0.416, -0.490,  0.490, -0.416,  0.278, -0.098}
 };
 
-const DCHuffmanCode dc_table[11] = {
+// Provided DC Huffman Table
+const DC_Huffman_Code dc_table[11] = {
     {0, "010", 3, 0},  
     {1, "011", 4, 1},  
     {2, "100", 5, 2},  
@@ -48,7 +51,8 @@ const DCHuffmanCode dc_table[11] = {
     {10, "11111110", 18, 10}
 };
 
-const ACHuffmanCode ac_table[162] = {
+// Provided AC Huffman Table
+const AC_Huffman_Code ac_table[162] = {
     {0, 0, "1010", 4},
     {0, 1, "00", 3},
     {0, 2, "01", 4},

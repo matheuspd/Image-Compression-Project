@@ -1,70 +1,67 @@
 #ifndef COMPRESSOR_H
 #define COMPRESSOR_H
 
-#include "types.h"
+#include "img_functions.h"
 #include "bmp.h"
-#include "jpeg.h"
-
-#include <string.h>
-#include <math.h>
 
 /**
- * @brief Compresses a BMP file into JPEG format.
+ * @brief Compresses a BMP file into a BIN file.
  *
- * This function reads the BMP headers, validates the image, and reads its pixel data.
- * The actual JPEG compression is assumed to be handled elsewhere.
- *
+ * This function opens the BMP file, reads its header and pixel data,
+ * and then compresses the data into BIN format still with the BMP header.
+ * 
  * @param input_bmp Path to the input BMP file.
- * @param output_jpeg Path to the output JPEG file.
+ * @param output_bin Path to the output BIN file.
  * @return SUCCESS if the compression is successful, otherwise FAILURE.
  */
-int compress_jpeg(const char *input_bmp, const char *output_bin);
+int compress_bmp(const char *input_bmp, const char *output_bin);
 
-YCbCrPixel *rgb_to_YCrCb(RGBPixel *pixels, int total_pixels);
+/**
+ * @brief Applies DCT, quantization, and zig-zag ordering to Y, Cb, and Cr image channels.
+ *
+ * This function receives a linear array of pixels in the YCbCr color space,
+ * splits them into blocks, applies the Discrete Cosine Transform (DCT)
+ * to each block, quantizes the resulting coefficients, and finally
+ * reorders them in zig-zag order for compression.
+ *
+ * @param pixels_YCrCb Pointer to the input pixel array in YCbCr color space.
+ * @param width Width of the image in pixels (must be divisible by BLOCK_SIZE).
+ * @param height Height of the image in pixels (must be divisible by BLOCK_SIZE).
+ * @param Ct Precomputed matrix used in the DCT calculation.
+ * @return Pointer to a dynamically allocated Blocks_ZigZag struct containing the processed data,
+ *         or NULL if a memory allocation fails.
+ */
+Blocks_ZigZag *process_channels(YCbCr_Pixel *pixels_YCrCb, int width, int height, double Ct[BLOCK_SIZE][BLOCK_SIZE]);
 
-void multiplicar_matrizes(double A[BLOCK_SIZE][BLOCK_SIZE], double B[BLOCK_SIZE][BLOCK_SIZE], 
-                          double C[BLOCK_SIZE][BLOCK_SIZE]);
+/**
+ * @brief Applies RLE (Run-Length Encoding) on ZigZag vectors.
+ *
+ * This function takes the zigzag blocks for each color channel (Y, Cb, Cr),
+ * performs run-length encoding (RLE) on the AC coefficients of each block, and stores the result.
+ * The size of each RLE-compressed block is also recorded.
+ *
+ * The encoding follows JPEG-style RLE, encoding (SKIP, CATEGORY, VALUE) for each non-zero AC coefficient.
+ * It also handles special cases like long runs of zeros (ZRL) and End-Of-Block (EOB) markers.
+ *
+ * @param blocks Pointer to the structure containing zigzag vectors for Y, Cb, and Cr components.
+ * @return Pointer to a RLE structure containing encoded data and sizes for each block,
+ *         or NULL if a memory allocation or encoding step fails.
+ */
+RLE *process_zigzag_vectors(Blocks_ZigZag *blocks);
 
-// Transpõe matriz 8x8: B = A^T
-void transpor(double A[BLOCK_SIZE][BLOCK_SIZE], double B[BLOCK_SIZE][BLOCK_SIZE]);
-
-// Aplica DCT usando a fórmula matricial DCT = C * B * C^T
-void aplicar_dct_matricial(double block[BLOCK_SIZE][BLOCK_SIZE], double output[BLOCK_SIZE][BLOCK_SIZE], 
-                           double Ct[BLOCK_SIZE][BLOCK_SIZE]);
-
-
-void downsample_4_2_0(YCbCrPixel *pixels_YCrCb, int width, int height);
-
-
-void quantizar(double dct[BLOCK_SIZE][BLOCK_SIZE], const uint8_t matrix[BLOCK_SIZE][BLOCK_SIZE], 
-               int output[BLOCK_SIZE][BLOCK_SIZE]);
-
-BlocksZigZag process_channels(YCbCrPixel *pixels_YCrCb, int width, int height, double Ct[BLOCK_SIZE][BLOCK_SIZE]);
-
-void free_BlocosZigZag(BlocksZigZag blocks);
-
-void delta_encoding_DC(BlocksZigZag *blocks);
-
-int coef_category(int value);
-
-RLE_coef* RLE_encode_AC(int *coef, int *out_size);
-
-RLE_coef **process_AC_coef(int **blocks, int num_blocks, int *sizes);
-
-RLE process_zigzag_vectors(BlocksZigZag *blocks);
-
-void init_bitwriter(BitWriter *bw, FILE *fp);
-
-void write_bit(BitWriter *bw, int bit);
-
-void write_bits(BitWriter *bw, const char *bits);
-
-void write_n_bits(BitWriter *bw, int value, int n);
-
-void flush_bits(BitWriter *bw);
-
-void write_bits_complement1(BitWriter *bw, int value, int n_bits);
-
-void write_channel_blocks(BitWriter *bw, int *sizes, RLE_coef **rle, int num_blocks);
+/**
+ * @brief Writes RLE-compressed DCT coefficients of a channel to a binary stream using Huffman coding.
+ *
+ * For each block, the function encodes the DC coefficient using the DC Huffman table,
+ * and the AC coefficients using the AC Huffman table (both specified in the code).
+ * Encoded bits are written using the bit writer structure.
+ *
+ * @param bw Pointer to the Bit_Read_Write structure used to write bits to file.
+ * @param sizes Array with the number of encoded RLE coefficients for each block.
+ * @param rle 2D array of RLE-encoded coefficients for each block.
+ * @param num_blocks Number of blocks in the channel.
+ * @return SUCCESS (0) on success, or FAILURE (non-zero) on error.
+ */
+int write_channel_blocks(Bit_Read_Write *bw, int *sizes, RLE_coef **rle, int num_blocks);
 
 #endif /* COMPRESSOR_H */

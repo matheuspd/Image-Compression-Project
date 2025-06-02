@@ -1,7 +1,7 @@
 #include "compressor.h"
 
 /**
- * @brief Main entry point for the BMP-to-JPEG compressor.
+ * @brief Main entry point for the BMP compressor.
  *
  * This function validates command-line arguments and initiates the compression process.
  *
@@ -15,7 +15,7 @@ int main(int argc, char *argv[]) {
         exit(FAILURE);
     }
 
-    if (compress_jpeg(argv[1], argv[2]) != SUCCESS) {
+    if (compress_bmp(argv[1], argv[2]) != SUCCESS) {
         printf("Error compressing the BMP file.\n");
         exit(FAILURE);
     }

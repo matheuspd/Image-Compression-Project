@@ -1,0 +1,15 @@
+{
+    "files.associations": {
+        "stddef.h": "c",
+        "img_functions.h": "c",
+        "string.h": "c",
+        "atomic": "c",
+        "array": "c",
+        "deque": "c",
+        "string": "c",
+        "unordered_map": "c",
+        "vector": "c",
+        "iterator": "c",
+        "string_view": "c"
+    }
+}
