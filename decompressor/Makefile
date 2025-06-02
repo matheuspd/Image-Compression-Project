@@ -20,7 +20,7 @@ CFLAGS = -I$(INCDIR) -I$(LIBJPEG_INCDIR) -std=c99 -Wall -Wextra -pedantic -O2
 # Linker flags:
 # -L points to the directory of the libjpeg library,
 # -ljpeg links with the jpeg library.
-LDFLAGS = -L$(LIBJPEG_LIBDIR) -ljpeg
+LDFLAGS = -L$(LIBJPEG_LIBDIR) -ljpeg -lm
 
 # Source files for the decompressor project.
 SRC = src/main.c src/decompressor.c

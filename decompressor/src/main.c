@@ -1,12 +1,15 @@
 #include "decompressor.h"
-#include <stdio.h>
 
 int main(int argc, char *argv[]) {
     if (argc != 3) {
-        printf("Uso: %s <entrada.jpg> <saida.bmp>\n", argv[0]);
-        return 1;
+        printf("Uso: %s <entrada.bin> <saida.bmp>\n", argv[0]);
+        exit(FAILURE);
     }
 
-    descomprimir_jpeg(argv[1], argv[2]);
-    return 0;
+    if (decompress_bin(argv[1], argv[2]) != SUCCESS) {
+        printf("Error decompressing the BIN file.\n");
+        exit(FAILURE);
+    }
+
+    return SUCCESS;
 }

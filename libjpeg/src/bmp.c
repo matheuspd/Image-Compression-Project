@@ -98,18 +98,18 @@ int readInfoHeader(FILE *F, BMPINFOHEADER *H) {
     /**
      * Debug output
      */
-    printf("\nBMP File Header Info:\n");
-    printf("Size: %u\n", H->biSize);
-    printf("Width: %d\n", H->biWidth);
-    printf("Height: %d\n", H->biHeight);
-    printf("Planes: %hu\n", H->biPlanes);
-    printf("BitCount: %hu\n", H->biBitCount);
-    printf("Compression: %u\n", H->biCompression);
-    printf("SizeImage: %u\n", H->biSizeImage);
-    printf("XPelsPerMeter: %d\n", H->biXPelsPerMeter);
-    printf("YPelsPerMeter: %d\n", H->biYPelsPerMeter);
-    printf("ClrUsed: %u\n", H->biClrUsed);
-    printf("ClrImportant: %u\n", H->biClrImportant);
+    // printf("\nBMP File Header Info:\n");
+    // printf("Size: %u\n", H->biSize);
+    // printf("Width: %d\n", H->biWidth);
+    // printf("Height: %d\n", H->biHeight);
+    // printf("Planes: %hu\n", H->biPlanes);
+    // printf("BitCount: %hu\n", H->biBitCount);
+    // printf("Compression: %u\n", H->biCompression);
+    // printf("SizeImage: %u\n", H->biSizeImage);
+    // printf("XPelsPerMeter: %d\n", H->biXPelsPerMeter);
+    // printf("YPelsPerMeter: %d\n", H->biYPelsPerMeter);
+    // printf("ClrUsed: %u\n", H->biClrUsed);
+    // printf("ClrImportant: %u\n", H->biClrImportant);
     
     return SUCCESS;
 }
@@ -145,8 +145,11 @@ RGBPixel *read_pixels(FILE *file, BMPFILEHEADER *H, int width, int height) {
      * BMP stores pixel rows from bottom to top
      */
     for(int y = height - 1; y >= 0; y--) {
-        fread(&pixels[y * width], sizeof(RGBPixel), width, file);
-        
+        for(int x = 0; x < width; x++) {
+            fread(&pixels[y * width + x].b, sizeof(uint8_t), 1, file);
+            fread(&pixels[y * width + x].g, sizeof(uint8_t), 1, file);
+            fread(&pixels[y * width + x].r, sizeof(uint8_t), 1, file);
+        }     
         /**
          * Skip the padding bytes at the end of each row
          */
@@ -162,4 +165,71 @@ RGBPixel *read_pixels(FILE *file, BMPFILEHEADER *H, int width, int height) {
  */
 void free_pixels(RGBPixel *pixels) {
     free(pixels);
+}
+
+/**
+ * @brief Writes a BMP file based on the provided headers and pixel array.
+ *
+ * This function receives the BMPFILEHEADER and BMPINFOHEADER, the pixel array, and
+ * the destination file already opened, writing the data formatted correctly (including padding).
+ *
+ * @param dst Pointer to the destination file already opened in "wb" mode.
+ * @param fileHeader Pointer to the BMP file header.
+ * @param infoHeader Pointer to the BMP information header.
+ * @param pixels Pixel array (RGBPixel) previously loaded.
+ * @return SUCCESS if the operation is successful, otherwise FAILURE.
+ */
+int write_bmp(FILE *dst, BMPFILEHEADER *fileHeader, BMPINFOHEADER *infoHeader, RGBPixel *pixels) {
+    /**
+     * Header BMP
+     */
+    if (fwrite(&fileHeader->bfType, sizeof(unsigned short), 1, dst) != 1) return FAILURE;
+    if (fwrite(&fileHeader->bfSize, sizeof(unsigned int), 1, dst) != 1) return FAILURE;
+    if (fwrite(&fileHeader->bfReserved1, sizeof(unsigned short), 1, dst) != 1) return FAILURE;
+    if (fwrite(&fileHeader->bfReserved2, sizeof(unsigned short), 1, dst) != 1) return FAILURE;
+    if (fwrite(&fileHeader->bfOffBits, sizeof(unsigned int), 1, dst) != 1) return FAILURE;
+    
+    /**
+     * Info Header BMP
+     */
+    if (fwrite(&infoHeader->biSize, sizeof(unsigned int), 1, dst) != 1) return FAILURE;
+    if (fwrite(&infoHeader->biWidth, sizeof(int), 1, dst) != 1) return FAILURE;
+    if (fwrite(&infoHeader->biHeight, sizeof(int), 1, dst) != 1) return FAILURE;
+    if (fwrite(&infoHeader->biPlanes, sizeof(unsigned short), 1, dst) != 1) return FAILURE;
+    if (fwrite(&infoHeader->biBitCount, sizeof(unsigned short), 1, dst) != 1) return FAILURE;
+    if (fwrite(&infoHeader->biCompression, sizeof(unsigned int), 1, dst) != 1) return FAILURE;
+    if (fwrite(&infoHeader->biSizeImage, sizeof(unsigned int), 1, dst) != 1) return FAILURE;
+    if (fwrite(&infoHeader->biXPelsPerMeter, sizeof(int), 1, dst) != 1) return FAILURE;
+    if (fwrite(&infoHeader->biYPelsPerMeter, sizeof(int), 1, dst) != 1) return FAILURE;
+    if (fwrite(&infoHeader->biClrUsed, sizeof(unsigned int), 1, dst) != 1) return FAILURE;
+    if (fwrite(&infoHeader->biClrImportant, sizeof(unsigned int), 1, dst) != 1) return FAILURE;
+    
+    int width = infoHeader->biWidth;
+    int height = infoHeader->biHeight;
+    
+    /**
+     * Calculate the padding: each row must have a size that is a multiple of 4 bytes
+     */
+    int padding = (4 - (width * 3) % 4) % 4;
+    
+    /**
+     * Write the pixels to the destination file (remember that BMP stores the pixels from bottom to top)
+     */
+    for (int y = height - 1; y >= 0; y--) {
+        for (int x = 0; x < width; x++) {
+            RGBPixel *p = &pixels[y * width + x];
+            if (fwrite(&p->b, sizeof(uint8_t), 1, dst) != 1) return FAILURE;
+            if (fwrite(&p->g, sizeof(uint8_t), 1, dst) != 1) return FAILURE;
+            if (fwrite(&p->r, sizeof(uint8_t), 1, dst) != 1) return FAILURE;
+        }
+        /**
+         *  Write the padding bytes (zero)
+         */
+        uint8_t zero = 0;
+        for (int p = 0; p < padding; p++) {
+            if (fwrite(&zero, sizeof(uint8_t), 1, dst) != 1) return FAILURE;
+        }
+    }
+    
+    return SUCCESS;
 }

@@ -48,4 +48,18 @@ RGBPixel *read_pixels(FILE *file, BMPFILEHEADER *H, int width, int height);
  */
 void free_pixels(RGBPixel *pixels);
 
+/**
+ * @brief Writes a BMP file based on the provided headers and pixel array.
+ *
+ * This function receives the BMPFILEHEADER and BMPINFOHEADER, the pixel array, and
+ * the destination file already opened, writing the data formatted correctly (including padding).
+ *
+ * @param dst Pointer to the destination file already opened in "wb" mode.
+ * @param fileHeader Pointer to the BMP file header.
+ * @param infoHeader Pointer to the BMP information header.
+ * @param pixels Pixel array (RGBPixel) previously loaded.
+ * @return SUCCESS if the operation is successful, otherwise FAILURE.
+ */
+int write_bmp(FILE *dst, BMPFILEHEADER *fileHeader, BMPINFOHEADER *infoHeader, RGBPixel *pixels);
+
 #endif /* BMP_H */

@@ -1,5 +1,4 @@
 #include "compressor.h"
-#include <stdio.h>
 
 /**
  * @brief Main entry point for the BMP-to-JPEG compressor.
@@ -12,13 +11,13 @@
  */
 int main(int argc, char *argv[]) {
     if (argc != 3) {
-        printf("Usage: %s <input.bmp> <output.jpg>\n", argv[0]);
-        return FAILURE;
+        printf("Usage: %s <input.bmp> <output.bin>\n", argv[0]);
+        exit(FAILURE);
     }
 
     if (compress_jpeg(argv[1], argv[2]) != SUCCESS) {
         printf("Error compressing the BMP file.\n");
-        return FAILURE;
+        exit(FAILURE);
     }
     
     return SUCCESS;

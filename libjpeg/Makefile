@@ -12,7 +12,7 @@ INCDIR = include
 CFLAGS = -I$(INCDIR) -std=c99 -Wall -Wextra -pedantic -O2
 
 # Source files in the libjpeg project.
-SRC = src/jpeg.c src/bmp.c
+SRC = src/jpeg.c src/bmp.c src/types.c
 
 # Generate object files from source files.
 OBJ = $(SRC:.c=.o)

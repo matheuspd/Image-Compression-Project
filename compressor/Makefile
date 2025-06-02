@@ -20,7 +20,7 @@ CFLAGS = -I$(INCDIR) -I$(LIBJPEG_INCDIR) -std=c99 -Wall -Wextra -pedantic -O2
 # Linker flags:
 # -L: Library directory for libjpeg.
 # -ljpeg: Link with the libjpeg library.
-LDFLAGS = -L$(LIBJPEG_LIBDIR) -ljpeg
+LDFLAGS = -L$(LIBJPEG_LIBDIR) -ljpeg -lm
 
 # Source files for the compressor project.
 SRC = src/main.c src/compressor.c

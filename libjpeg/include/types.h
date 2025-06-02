@@ -4,7 +4,13 @@
 #define SUCCESS 0
 #define FAILURE 1
 
+#define BLOCK_SIZE 8
+#define MAX_LEN_MATRIX_LINE_SIZE 65
+
+#include <stdio.h>
 #include <stdint.h>
+#include <stddef.h>
+#include <stdlib.h>
 
 /**
  * @brief BMP file header structure.
@@ -51,10 +57,70 @@ typedef struct {
     uint8_t r;  /* Red component */
 } RGBPixel;
 
-/*
 typedef struct {
-    unsigned int Y, Cb, Cr;
+    double Y;
+    double Cb;
+    double Cr;
 } YCbCrPixel;
-*/
+
+typedef struct {
+    int **Y_blocks;
+    int **Cb_blocks;
+    int **Cr_blocks;
+    int num_blocks;
+} BlocksZigZag;
+
+typedef struct {
+    int skip;
+    int category;
+    int value;
+} RLE_coef;
+
+typedef struct {
+    RLE_coef **Y_rle;
+    RLE_coef **Cb_rle;
+    RLE_coef **Cr_rle;
+    int *Y_sizes;
+    int *Cb_sizes;
+    int *Cr_sizes;
+} RLE;
+
+typedef struct {
+    int category;
+    const char *prefix;
+    int total_length;
+    int mantissa_bits;
+} DCHuffmanCode;
+
+typedef struct {
+    int zeros;
+    int category;
+    const char *prefix;
+    int total_length;
+} ACHuffmanCode;
+
+typedef struct {
+    FILE *file;
+    unsigned char buffer;
+    int bit_count;
+} BitWriter;
+
+typedef struct {
+    FILE *file;
+    unsigned char buffer;
+    int bit_count;
+} BitReader;
+
+extern const uint8_t lumin_matrix[BLOCK_SIZE][BLOCK_SIZE];
+
+extern const uint8_t crom_matrix[BLOCK_SIZE][BLOCK_SIZE];
+
+// Matriz C fornecida (pré-calculada para DCT 8x8)
+extern const double C[BLOCK_SIZE][BLOCK_SIZE];
+
+extern const DCHuffmanCode dc_table[11];
+
+extern const ACHuffmanCode ac_table[162];
+
 
 #endif /* TYPES_H */
