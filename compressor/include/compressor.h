@@ -1,9 +1,3 @@
-/**
- * =============== Autor ===============
- * Matheus Pereira Dias - NUSP: 11207752
- * =====================================
-*/
-
 #ifndef COMPRESSOR_H
 #define COMPRESSOR_H
 
